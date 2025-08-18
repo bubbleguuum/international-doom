@@ -1066,10 +1066,6 @@ static void M_ID_TrueColorHook (void)
 
     // [crispy] re-calculate amount of colormaps and light tables
     R_InitTrueColormaps(LevelUseFullBright ? "COLORMAP" : "FOGMAP");
-    // [crispy] re-calculate the zlight[][] array
-    R_InitLightTables();
-    // [crispy] re-calculate the scalelight[][] array
-    R_ExecuteSetViewSize();
 }
 
 static void M_ID_TrueColor (int choice)
@@ -3497,10 +3493,6 @@ static void M_ID_SmoothLightingHook (void)
 
     // [crispy] re-calculate amount of colormaps and light tables
     R_InitTrueColormaps(LevelUseFullBright ? "COLORMAP" : "FOGMAP");
-    // [crispy] re-calculate the zlight[][] array
-    R_InitLightTables();
-    // [crispy] re-calculate the scalelight[][] array
-    R_ExecuteSetViewSize();
     // [crispy] re-calculate fake contrast
     P_SegLengths();
 }

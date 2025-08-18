@@ -718,6 +718,10 @@ void R_InitTrueColormaps(char *current_colormap)
 	const byte *const playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
 	const byte *const colormap = W_CacheLumpName(current_colormap, PU_STATIC);
 
+	int colormaps_size;
+	static void *prev_colormaps = NULL;
+	static int prev_colormaps_size = 0;
+
 	// [JN] Saturation floats, high and low.
 	// If saturation has been modified (< 100), set high and low
 	// values according to saturation level. Sum of r,g,b channels
@@ -737,7 +741,8 @@ void R_InitTrueColormaps(char *current_colormap)
 		NUMCOLORMAPS = 32;
 	}
 
-	colormaps = I_Realloc(colormaps, (NUMCOLORMAPS + 1) * 256 * sizeof(lighttable_t));
+	colormaps_size = (NUMCOLORMAPS + 1) * 256 * sizeof(lighttable_t);
+	colormaps = I_Realloc(colormaps, colormaps_size);
 
 	if (vid_truecolor)
 	{
@@ -831,6 +836,19 @@ void R_InitTrueColormaps(char *current_colormap)
 	// [JN] Recalculate shadow alpha value for shadowed patches based on contrast.
 	// 0xA0 (160) represents 62.75% darkening. Ensure the result stays within 0-255.
 	shadow_alpha = (uint8_t)BETWEEN(0, 255 - (32 * vid_contrast), 0xA0 / vid_contrast);
+
+	if(prev_colormaps && (colormaps != prev_colormaps || colormaps_size != prev_colormaps_size)) {
+
+		// [crispy] re-calculate the zlight[][] array
+		R_InitLightTables();
+
+		// [crispy] force delayed R_ExecuteSetViewSize() to re-calculate the scalelight[][] array
+		setsizeneeded = true;
+	}
+
+	prev_colormaps = colormaps;
+	prev_colormaps_size = colormaps_size;
+
 }
 
 // -----------------------------------------------------------------------------
